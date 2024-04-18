@@ -1,45 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\Auth;
-
 Route::get('/', function () {
-    return 'Boa Noite';
+    return view('welcome');
 });
 
-Route::get('/dia', function () {
-    return 'Bom Dia';
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/nova', function () {
-    return 'welcome';
-});
-
-Route::prefix('admin')->group(function (){
-    Route::get('/dashboard', function () {
-        return 'area inicial';
-    });
-
-    Route::get('/contabil', function () {
-        return 'area contabel';
-    });
-    Route::get('/relatorios', function () {
-        return 'relatorios';
-    });
-
-});
-
-Route::middleware('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return 'area inicial';
-    });
-
-    Route::get('/contabil', function () {
-        return 'area contabel';
-    });
-    Route::get('/relatorios', function () {
-        return 'relatorios';
-    });
-
-});
+require __DIR__.'/auth.php';
